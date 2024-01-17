@@ -1,26 +1,32 @@
 'use client'
 
+import { initialBlogFormData } from "@/utils";
+import { BlogFormData } from "@/utils/types";
 import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react"
 
 type ContextType ={
 loading: boolean,
-setLoading: Dispatch<SetStateAction<boolean>>
+setLoading: Dispatch<SetStateAction<boolean>>,
+formData: BlogFormData;
+  setFormData: Dispatch<SetStateAction<BlogFormData>>;
 };
 
 const initaialState={
     loading: false,
-    setLoading: ()=>{}
+    setLoading: ()=>{},
+    formData: initialBlogFormData,
+  setFormData: () => {},
 }
 
 export const GlobalContext = createContext<ContextType>(initaialState);
 
 export default function GlobalState ({children}:{children:ReactNode}){
     const [loading, setLoading]= useState(false);
+    const [formData, setFormData]= useState(initialBlogFormData)
 
  return (
  <GlobalContext.Provider
- value={{ loading,
-    setLoading}}
+ value={{ loading, setLoading, formData, setFormData}}
  >
    {children}
  </GlobalContext.Provider>

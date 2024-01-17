@@ -7,12 +7,14 @@ import ThemeToggler from "../theme";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { usePathname, useRouter } from "next/navigation";
+import Spinner from "../spinner";
 export default function Header() {
   const [sticky, setSticky] = useState<boolean>(false);
   const [navbarOpen, setNavbarOpen] = useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
-console.log(session, 'session got')
+ 
+  
   function handleStickyNavbar() {
     if (window.scrollY >= 80) setSticky(true);
     else setSticky(false);
@@ -20,11 +22,14 @@ console.log(session, 'session got')
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
-  });
+  },[]);
+  
   function handleNavbarToggle() {
     setNavbarOpen(!navbarOpen);
   }
-
+  if (session === undefined) {
+    return <Spinner></Spinner>
+  }
   return (
     <div>
       <header
@@ -48,7 +53,7 @@ console.log(session, 'session got')
                 NextBlog
               </Link>
             </div>
- {/* hamburger menu for small devices            */}
+            {/* hamburger menu for small devices            */}
             <div className="flex w-full items-center justify-between px-4">
               <button
                 onClick={handleNavbarToggle}
@@ -73,8 +78,8 @@ console.log(session, 'session got')
                 />
               </button>
               <nav
-                  id="navbarCollapse"
-                  className={`absolute right-0 z-30 w-[250px] rounded border-[.5px] bg-white border-body-color/50 py-4 
+                id="navbarCollapse"
+                className={`absolute right-0 z-30 w-[250px] rounded border-[.5px] bg-white border-body-color/50 py-4 
                 px-6 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100
 
                 ${
@@ -83,38 +88,35 @@ console.log(session, 'session got')
                     : "invisible top-[120%] opacity-0"
                 }
                 `}
-                >
-                  <ul className="block lg:flex lg:space-x-12">
-                    {menuItems.map((item: any) => (
-                      <li key={item.id} className="group relative">
-                        <Link
-                          href={item.path}
-                          className={`flex py-2 text-base text-dark group-hover:opacity-70 dark:text-white lg:mr-0 lg:inline-flex lg:py-6 lg:px-0`}
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+              >
+                <ul className="block lg:flex lg:space-x-12">
+                  {menuItems.map((item: any) => (
+                    <li key={item.id} className="group relative">
+                      <Link
+                        href={item.path}
+                        className={`flex py-2 text-base text-dark group-hover:opacity-70 dark:text-white lg:mr-0 lg:inline-flex lg:py-6 lg:px-0`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
             <div className="flex gap-4 items-center justify-end pr-16 lg:pr-0">
-            {session !== null ? (
-                  <Button
-                    onClick={() => router.push("/create")}
-                    text="Create"
-                  />
-                ) : null}
-                <Button
-                  onClick={
-                    session !== null ? () => signOut() : () => signIn("github")
-                  }
-                  text={session !== null ? "Logout" : "Login"}
-                />
+              {session !== null ? (
+                <Button onClick={() => router.push("/create")} text="Create" />
+              ) : null}
+              <Button
+                onClick={
+                  session !== null ? () => signOut() : () => signIn("github")
+                }
+                text={session !== null ? "Logout" : "Login"}
+              />
 
-<div className="flex gap-3 items-center">
-                  <ThemeToggler />
-                </div>
+              <div className="flex gap-3 items-center">
+                <ThemeToggler />
+              </div>
             </div>
           </div>
         </div>
