@@ -1,18 +1,21 @@
 "use client";
 import { menuItems } from "@/utils";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "../buttons";
 import ThemeToggler from "../theme";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { usePathname, useRouter } from "next/navigation";
 import Spinner from "../spinner";
+import { GlobalContext } from "@/context";
 export default function Header() {
   const [sticky, setSticky] = useState<boolean>(false);
   const [navbarOpen, setNavbarOpen] = useState<boolean>(false);
+  const {setSearchQuery, setSearchResults} = useContext(GlobalContext)
   const { data: session } = useSession();
   const router = useRouter();
+  const pathName = usePathname();
  
   
   function handleStickyNavbar() {
@@ -22,7 +25,12 @@ export default function Header() {
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
+    
   },[]);
+  useEffect(()=> {
+    setSearchResults([]) 
+    setSearchQuery('')  
+  },[pathName])
   
   function handleNavbarToggle() {
     setNavbarOpen(!navbarOpen);
@@ -30,6 +38,8 @@ export default function Header() {
   if (session === undefined) {
     return <Spinner></Spinner>
   }
+ 
+
   return (
     <div>
       <header

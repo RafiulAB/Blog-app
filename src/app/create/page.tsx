@@ -2,10 +2,12 @@
 
 import Button from "@/components/buttons";
 import { GlobalContext } from "@/context";
-import { firebaseConfig, formControls } from "@/utils";
+import { firebaseConfig, formControls, initialBlogFormData } from "@/utils";
 import { BlogFormData } from "@/utils/types";
 import { initializeApp } from "firebase/app";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 
 //connect to firebase
@@ -43,8 +45,12 @@ async function handleImageSaveToFireBase(file: any) {
 const create = () => {
   const { formData, setFormData } = useContext(GlobalContext);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
-  console.log(formData)
+  console.log(session, 'session')
+
+ 
   //get image file name
   async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (!event.target.files) return;
@@ -62,6 +68,29 @@ const create = () => {
       });
     }
   } 
+  async function handleSaveBlogPost(){
+    console.log(formData)
+    const res = await fetch("/api/blog-post/add-post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...formData,
+        userid: session?.user?.name,
+        userimage: session?.user?.image,
+        comments: [],
+      }),
+    });
+    const data = await res.json();
+
+    console.log(data, "data123");
+    if (data && data.success) {
+      setFormData(initialBlogFormData)
+      router.push("/blogs");
+    }
+  }
+
   return (
     <section className="overflow-hidden py-16 md:py-20 lg:py-28">
       <div className="container">
@@ -156,7 +185,7 @@ const create = () => {
                     <div className="w-full px-4">
                       <Button
                         text="Create New Blog"
-                        onClick={()=>{}}
+                        onClick={ handleSaveBlogPost}
                       />
                     </div>
                   </div>
