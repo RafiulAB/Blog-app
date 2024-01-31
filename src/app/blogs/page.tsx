@@ -2,7 +2,7 @@ import BlogList from "@/components/blogs/blog-lists";
 
 
 async function extractAllBlogs() {
-    const res = await fetch(`api/blog-post/get-all-post`, {
+    const res = await fetch(`/api/blog-post/get-all-post`, {
       method: "GET",
       cache: "no-store",
     });
