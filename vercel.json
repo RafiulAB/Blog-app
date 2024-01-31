@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "client/next.config.js", "use": "@vercel/node" },
+    { "src": "server/vercel.config.js", "use": "@vercel/node" } // Add this if you have server-side code
+  ],
+  "routes": [{ "src": "/(.*)", "dest": "/client/$1" }]
+}
