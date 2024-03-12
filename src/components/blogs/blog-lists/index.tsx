@@ -31,7 +31,7 @@ export default function BlogList({ lists }: { lists: Blog[] }) {
       <div className="container">
         <div className="-mx-4 grid grid-cols-3 gap-2">
           {lists && lists.length
-            ? lists.map((listItem: Blog) => (
+            ? lists?.map((listItem: Blog) => (
                 <div className="px-4" key={listItem.id}>
                   <SingleBlog handleDelete={handleDelete}  blogItem={listItem} />
                 </div>
